@@ -14,172 +14,155 @@ import json
 import _init_paths
 from mtcnn_detector import MtcnnDetector, draw_faces
 
+DO_RESIZE = False
+RESIZED_LONG_SIDE = 640
 
-def print_usage():
-    usage = 'python %s <img-list-file> <save-dir>' % osp.basename(__file__)
-    print('USAGE: ' + usage)
+MODEL_PATH = '../../model'
+
+FDDB_IMG_ROOT_DIR = r'D:\FDDB_UMass\originalPics'
+FDDB_FOLDS_DIR = r'D:\FDDB_UMass\FDDB-folds'
+
+# FDDB_IMG_ROOT_DIR = '/workspace/data/zjh'
+# FDDB_FOLDS_DIR = "/workspace/data/zjh/FDDB-folds/"
+
+OUTPUT_THRESHOLD = 0.7
+
+SAVE_DIR = './fd_rlt2'
 
 
-def main(lfw_list_fn,
-         lfw_root,
-         save_dir,
+def main(save_dir=None,
          save_img=False,
          show_img=False):
 
     minsize = 20
-    caffe_model_path = "../../model"
-    threshold = [0.6, 0.7, 0.7]
+    caffe_model_path = MODEL_PATH
+    threshold = [0.6, 0.7, OUTPUT_THRESHOLD]
     scale_factor = 0.709
+
+    if not save_dir:
+        save_dir = './fd_rlt'
 
     if not osp.exists(save_dir):
         os.makedirs(save_dir)
 
-    fp_rlt = open(osp.join(save_dir, 'lfw_mtcnn_fd_rlt.json'), 'w')
-
-#    result_list = []
-    fp_rlt.write('[\n')
-
     t1 = time.clock()
     detector = MtcnnDetector(caffe_model_path)
     t2 = time.clock()
-    print("initFaceDetector() costs %f seconds" % (t2 - t1))
 
-    fp = open(lfw_list_fn, 'r')
+    msg = "initFaceDetector() costs %f seconds" % (t2 - t1)
 
     ttl_time = 0.0
     img_cnt = 0
 
-    for line in fp:
-        imgpath = line.strip()
-        print("\n===>" + imgpath)
-        if imgpath == '':
-            print 'empty line, not a file name, skip to next'
-            continue
-        if imgpath[0] == '#':
-            print 'skip line starts with #, skip to next'
-            continue
+    for k in range(1, 3):
+        k_str = str(k)
+        if k != 10:
+            k_str = "0" + k_str
 
-        splits = imgpath.split()
-        imgpath = splits[0]
+        fn_list = osp.join(FDDB_FOLDS_DIR, "FDDB-fold-" + k_str + ".txt")
+        fn_fd_rlt = osp.join(save_dir, "fold-" + k_str + "-out.txt")
 
-        id = 'unkown' if len(splits) < 2 else splits[1]
+        print('===========================')
+        print('Process image list: ' + fn_list)
+        print('Save results into: ' + fn_fd_rlt)
 
-        if not imgpath.startswith('/'):
-            fullpath = osp.join(lfw_root, imgpath)
-        else:
-            fullpath = imgpath
+        fp_list = open(fn_list, 'r')
+        fp_fd_rlt = open(fn_fd_rlt, 'w')
 
-        rlt = {}
-        rlt["filename"] = imgpath
-        rlt["faces"] = []
-        rlt['face_count'] = 0
-        rlt['id'] = id
+        for line in fp_list:
+            imgname = line.strip()
+            imgpath = osp.join(FDDB_IMG_ROOT_DIR, imgname + ".jpg")
+            print "######\n", imgpath
 
-        try:
-            img = cv2.imread(fullpath)
-        except:
-            print('failed to load image: ' + fullpath)
-            rlt["message"] = "failed to load"
-            result_list.append(rlt)
-            continue
+            img = cv2.imread(imgpath)
 
-        if img is None:
-            print('failed to load image: ' + fullpath)
-            rlt["message"] = "failed to load"
-            result_list.append(rlt)
-            continue
+            if img is None:
+                raise Exception('failed to load image: ' + imgpath)
 
-        img_cnt += 1
-        t1 = time.clock()
+            resize_factor = 1.0
 
-        bboxes, points = detector.detect_face(img, minsize,
-                                              threshold, scale_factor)
+            if DO_RESIZE:
+                print('original image shape: {}'.format(img.shape))
+                ht, wd, chs = img.shape
 
-        t2 = time.clock()
-        ttl_time += t2 - t1
-        print("detect_face() costs %f seconds" % (t2 - t1))
+                if ht > wd:
+                    resize_factor = float(RESIZED_LONG_SIDE) / ht
+                else:
+                    resize_factor = float(RESIZED_LONG_SIDE) / wd
 
-        if len(bboxes) > 0:
-            for (box, pts) in zip(bboxes, points):
-                #                box = box.tolist()
-                #                pts = pts.tolist()
-                tmp = {'rect': box[0:4],
-                       'score': box[4],
-                       'pts': pts
-                       }
-                rlt['faces'].append(tmp)
+                Wd_new = int(resize_factor * wd)
+                ht_new = int(resize_factor * ht)
 
-            rlt['face_count'] = len(bboxes)
-        rlt['message'] = 'success'
-#        result_list.append(rlt)
-        s = json.dumps(rlt, indent=2)
-        fp_rlt.write(s + ',\n')
-#        fp_rlt.write(',\n' + s)
+                resized_img = cv2.resize(img, (Wd_new, ht_new))
+                print('resized image shape: {}'.format(resized_img.shape))
 
-#        print('output bboxes: ' + str(bboxes))
-#        print('output points: ' + str(points))
-        # toc()
+                # if show_img:
+                #     cv2.imshow('resied_img', resized_img)
 
-        if bboxes is None:
-            continue
+                #     ch = cv2.waitKey(0) & 0xFF
+                #     if ch == 27:
+                #         break
+            else:
+                resized_img = img
 
-        print("\n===> Processed %d images, costs %f seconds, avg time: %f seconds" % (
-            img_cnt, ttl_time, ttl_time / img_cnt))
+            resize_factor_inv = 1.0 / resize_factor
 
-        if save_img or show_img:
-            draw_faces(img, bboxes, points)
+            img_cnt += 1
+            t1 = time.clock()
 
-        if save_img:
-            save_name = osp.join(save_dir, osp.basename(imgpath))
-            cv2.imwrite(save_name, img)
+            bboxes, points = detector.detect_face(resized_img, minsize,
+                                                  threshold, scale_factor)
 
-        if show_img:
-            cv2.imshow('img', img)
+            t2 = time.clock()
+            ttl_time += t2 - t1
 
-            ch = cv2.waitKey(0) & 0xFF
-            if ch == 27:
-                break
+            msg = "detect_face() costs %f seconds" % (t2 - t1)
+            print(msg)
 
-#    json.dump(result_list, fp_rlt, indent=2)
-#    print fp_rlt.tell()
+            fp_fd_rlt.write(imgname + "\n")
+            fp_fd_rlt.write(str(len(bboxes)) + "\n")
 
-    # delete the last ','
-    if sys.platform is 'win32':
-        fp_rlt.seek(-3, 1)
-    else:
-        fp_rlt.seek(-2, 1)
-    fp_rlt.write('\n]')
+            print points
+            if DO_RESIZE:
+                for i in range(len(bboxes)):
+                    for j in range(4):
+                        bboxes[i][j] *= resize_factor_inv
 
-    fp_rlt.close()
-    fp.close()
+                    for j in range(10):
+                        points[i][j] *= resize_factor_inv
+
+            for i in range(len(bboxes)):
+                fp_fd_rlt.write(str(bboxes[i][0]) + " ")
+                fp_fd_rlt.write(str(bboxes[i][1]) + " ")
+                fp_fd_rlt.write(str(bboxes[i][2] - bboxes[i][0]) + " ")
+                fp_fd_rlt.write(str(bboxes[i][3] - bboxes[i][1]) + " ")
+                fp_fd_rlt.write(str(bboxes[i][4]) + "\n")
+
+            fp_fd_rlt.flush()
+
+            print("\n===> Processed %d images, costs %f seconds, avg time: %f seconds" % (
+                img_cnt, ttl_time, ttl_time / img_cnt))
+
+            if save_img or show_img:
+                draw_faces(img, bboxes, points)
+
+            if save_img:
+                save_name = osp.join(save_dir, osp.basename(imgpath))
+                cv2.imwrite(save_name, img)
+
+            if show_img:
+                cv2.imshow('img', img)
+
+                ch = cv2.waitKey(0) & 0xFF
+                if ch == 27:
+                    break
+
+        fp_list.close()
+        fp_fd_rlt.close()
 
     if show_img:
         cv2.destroyAllWindows()
 
 
 if __name__ == "__main__":
-    print_usage()
-
-#    lfw_list_fn = "./lfw_list_part.txt"
-    lfw_list_fn = "./list_lfw_failed3.txt"
-#    lfw_list_fn = "lfw_list_mtcnn.txt"
-    save_dir = './lfw_rlt'
-#    lfw_root = '/disk2/data/FACE/LFW/LFW'
-    lfw_root = r'C:\zyf\dataset\lfw'
-
-    print(sys.argv)
-
-    if not osp.exists(save_dir):
-        os.makedirs(save_dir)
-
-    if len(sys.argv) > 1:
-        lfw_list_fn = sys.argv[1]
-
-    if len(sys.argv) > 2:
-        save_dir = sys.argv[2]
-
-    if len(sys.argv) > 3:
-        show_img = not(not(sys.argv[3]))
-
-#    main(lfw_list_fn, lfw_root, save_dir, save_img=True, show_img=True)
-    main(lfw_list_fn, lfw_root, save_dir, save_img=False, show_img=False)
+    main(SAVE_DIR, save_img=False, show_img=False)
