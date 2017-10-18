@@ -14,8 +14,9 @@ import json
 import _init_paths
 from mtcnn_detector import MtcnnDetector, draw_faces
 
-DO_RESIZE = False
+DO_RESIZE = True
 RESIZED_LONG_SIDE = 640
+RESIZED_SHORT_SIDE = 480
 
 MODEL_PATH = '../../model'
 
@@ -27,7 +28,7 @@ FOLDS_CNT = 1
 
 OUTPUT_THRESHOLD = 0.7
 
-SAVE_DIR = './fd_rlt_original'
+SAVE_DIR = './fd_rlt_640x480'
 
 
 def main(save_dir=None,
@@ -86,19 +87,22 @@ def main(save_dir=None,
             if img is None:
                 raise Exception('failed to load image: ' + imgpath)
 
-            resize_factor = 1.0
+            resize_wd_factor = 1.0
+            resize_ht_factor = 1.0
 
             if DO_RESIZE:
                 print('original image shape: {}'.format(img.shape))
                 ht, wd, chs = img.shape
 
                 if ht > wd:
-                    resize_factor = float(RESIZED_LONG_SIDE) / ht
+                    resize_ht_factor = float(RESIZED_LONG_SIDE) / ht
+                    resize_wd_factor = float(RESIZED_SHORT_SIDE) / wd
                 else:
-                    resize_factor = float(RESIZED_LONG_SIDE) / wd
+                    resize_wd_factor = float(RESIZED_LONG_SIDE) / wd
+                    resize_ht_factor = float(RESIZED_SHORT_SIDE) / ht
 
-                wd_new = int(resize_factor * wd)
-                ht_new = int(resize_factor * ht)
+                wd_new = int(resize_wd_factor * wd)
+                ht_new = int(resize_ht_factor * ht)
 
                 resized_img = cv2.resize(img, (wd_new, ht_new))
                 print('resized image shape: {}'.format(resized_img.shape))
@@ -112,7 +116,8 @@ def main(save_dir=None,
             else:
                 resized_img = img
 
-            resize_factor_inv = 1.0 / resize_factor
+            resize_wd_factor_inv = 1.0 / resize_wd_factor
+            resize_ht_factor_inv = 1.0 / resize_ht_factor
 
             img_cnt += 1
             t1 = time.clock()
@@ -133,11 +138,13 @@ def main(save_dir=None,
             print points
             if DO_RESIZE:
                 for i in range(len(bboxes)):
-                    for j in range(4):
-                        bboxes[i][j] *= resize_factor_inv
+                    for j in range(4 / 2):
+                        bboxes[i][j * 2] *= resize_wd_factor_inv
+                        bboxes[i][j * 2 + 1] *= resize_ht_factor_inv
 
-                    for j in range(10):
-                        points[i][j] *= resize_factor_inv
+                    for j in range(10 / 2):
+                        points[i][j * 2] *= resize_wd_factor_inv
+                        points[i][j * 2 + 1] *= resize_ht_factor_inv
 
             for i in range(len(bboxes)):
                 fp_fd_rlt.write(str(bboxes[i][0]) + " ")
