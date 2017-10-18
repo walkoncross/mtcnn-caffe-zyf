@@ -1,0 +1,95 @@
+{
+    "nonce": "0.825284801147",
+    "timestamp": 1499293620,
+    "message": "success",
+    "code": 0,
+    "facex_det": [
+        {
+            "message": "success",
+            "code": 0,
+            "name": "../test_imgs/Ernie_Stewart_0001.jpg",
+            "detections": [
+                {
+                    "score": 0.9981,
+                    "pts": [
+                        [
+                            80,
+                            82
+                        ],
+                        [
+                            173,
+                            82
+                        ],
+                        [
+                            173,
+                            190
+                        ],
+                        [
+                            80,
+                            190
+                        ]
+                    ],
+                    "class": "face"
+                }
+            ]
+        },
+        {
+            "message": "success",
+            "code": 0,
+            "name": "../test_imgs/Marilyn_Monroe_0002.jpg",
+            "detections": [
+                {
+                    "score": 0.9976,
+                    "pts": [
+                        [
+                            91,
+                            57
+                        ],
+                        [
+                            173,
+                            57
+                        ],
+                        [
+                            173,
+                            180
+                        ],
+                        [
+                            91,
+                            180
+                        ]
+                    ],
+                    "class": "face"
+                }
+            ]
+        },
+        {
+            "message": "success",
+            "code": 0,
+            "name": "../test_imgs/Muhammad_Saeed_al-Sahhaf_0003.jpg",
+            "detections": [
+                {
+                    "score": 0.9986,
+                    "pts": [
+                        [
+                            72,
+                            74
+                        ],
+                        [
+                            165,
+                            74
+                        ],
+                        [
+                            165,
+                            214
+                        ],
+                        [
+                            72,
+                            214
+                        ]
+                    ],
+                    "class": "face"
+                }
+            ]
+        }
+    ]
+}

@@ -1,0 +1,6 @@
+positive
+mtcnn
+MTCNN_face_detection_alignment_master
+*.swp
+*.pyc
+fd_rlt/*
