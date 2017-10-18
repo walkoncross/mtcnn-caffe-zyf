@@ -21,7 +21,7 @@ MODEL_PATH = '../../model'
 
 FDDB_IMG_ROOT_DIR = r'D:\FDDB_UMass\originalPics'
 FDDB_FOLDS_DIR = r'D:\FDDB_UMass\FDDB-folds'
-FOLDS_CNT = 1
+FOLDS_CNT = 10
 # FDDB_IMG_ROOT_DIR = '/workspace/data/zjh'
 # FDDB_FOLDS_DIR = "/workspace/data/zjh/FDDB-folds/"
 
