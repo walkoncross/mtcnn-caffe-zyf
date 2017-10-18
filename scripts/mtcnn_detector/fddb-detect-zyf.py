@@ -54,7 +54,7 @@ def main(save_dir=None,
     ttl_time = 0.0
     img_cnt = 0
 
-    for k in range(1, 3):
+    for k in range(1, 11):
         k_str = str(k)
         if k != 10:
             k_str = "0" + k_str
