@@ -2,7 +2,8 @@
 
 Author: zhaoyafei0210@gmail.com (https://github.com/walkoncross)
 
-This repo is based on DuinoDu's MTCNN-v1 (3 stages) repo: https://github.com/DuinoDu/mtcnn, while it implements LNet of MTCNN-v2.
+This repo is based on DuinoDu's MTCNN-v1 (3 stages) repo: https://github.com/DuinoDu/mtcnn.
+In this repo we add the 4th stage: LNet, so now it's the same as MTCNN-v2.
 
 And also 3 wrappers of MTCNN-v2 are included for easy usage.
 
