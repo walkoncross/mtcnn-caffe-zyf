@@ -169,9 +169,10 @@ def main(save_dir=None,
                 if ch == 27:
                     break
 
-        fp_time.close()
         fp_list.close()
         fp_fd_rlt.close()
+
+    fp_time.close()
 
     if show_img:
         cv2.destroyAllWindows()
