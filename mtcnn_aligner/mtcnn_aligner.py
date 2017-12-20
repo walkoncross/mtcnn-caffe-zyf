@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+#import _init_paths
 import caffe
 import cv2
 import numpy as np
@@ -498,7 +499,7 @@ if __name__ == "__main__":
 
     caffe_model_path = '../model'
     save_dir = './fa_rlt'
-    save_json = 'mtcnn_align_test_rlt.json'
+#    fn_json = 'mtcnn_align_test_rlt.json'
 
     if not osp.exists(save_dir):
         os.makedirs(save_dir)
@@ -525,8 +526,14 @@ if __name__ == "__main__":
         ]
     ]
 
-    fp_rlt = open(osp.join(save_dir, save_json), 'w')
-    results = []
+    base_name = osp.basename(img_path)
+    name, ext = osp.splitext(base_name)
+
+#    fp_json = open(osp.join(save_dir, fn_json), 'w')
+    fn_json = osp.join(save_dir, name + '.json')
+    fp_json = open(fn_json, 'w')
+
+#    results = []
 
     img = cv2.imread(img_path)
 
@@ -558,14 +565,12 @@ if __name__ == "__main__":
     rlt['face_count'] = len(bboxes)
 
     rlt['message'] = 'success'
-    results.append(rlt)
+#    results.append(rlt)
 
-    json.dump(results, fp_rlt, indent=4)
-    fp_rlt.close()
+    json.dump(rlt, fp_json, indent=4)
+    fp_json.close()
 
     draw_faces(img, bboxes, points)
-    base_name = osp.basename(img_path)
-    name, ext = osp.splitext(base_name)
 #    ext = '.png'
 
     save_name = osp.join(save_dir, name + ext)

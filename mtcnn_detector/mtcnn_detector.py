@@ -781,10 +781,42 @@ if __name__ == "__main__":
                                           threshold, scale_factor,
                                           True)
 
-    draw_faces(img, bboxes, points, True)
+
     base_name = osp.basename(img_path)
     name, ext = osp.splitext(base_name)
-#    ext = '.png'
+
+    fn_json = osp.join(save_dir, name + '.json')
+    fp_json = open(fn_json, 'w')
+    rlt = {}
+    rlt["filename"] = img_path
+    rlt["faces"] = []
+    rlt['face_count'] = 0
+
+    n_boxes = len(face_rects)
+    print("-->Alignment cost %f seconds, processed %d face rects, avg time: %f seconds" %
+          ((t2 - t1), n_boxes, (t2 - t1) / n_boxes))
+
+    if bboxes is not None and len(bboxes) > 0:
+        for (box, pts) in zip(bboxes, points):
+            #                box = box.tolist()
+            #                pts = pts.tolist()
+            tmp = {'rect': box[0:4],
+                   'score': box[4],
+                   'pts': pts
+                   }
+            rlt['faces'].append(tmp)
+
+    rlt['face_count'] = len(bboxes)
+
+    rlt['message'] = 'success'
+#    results.append(rlt)
+
+    json.dump(rlt, fp_json, indent=2)
+    fp_json.close()
+
+    # draw face rects and save result image
+    draw_faces(img, bboxes, points, True)
+    ext = '.jpg'
 
     save_name = osp.join(save_dir, name + ext)
     cv2.imwrite(save_name, img)
