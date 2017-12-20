@@ -24,23 +24,23 @@ if not osp.exists(save_dir):
 
 img_path = r'C:\zyf\00_Ataraxia\facex\facex_cluster_test_imgs-wlc\3\3.jpg'
 face_rect1 = [
-                    [
-                        490,
-                        353
-                    ],
-                    [
-                        767,
-                        353
-                    ],
-                    [
-                        767,
-                        757
-                    ],
-                    [
-                        490,
-                        757
-                    ]
-                ]
+    [
+        490,
+        353
+    ],
+    [
+        767,
+        353
+    ],
+    [
+        767,
+        757
+    ],
+    [
+        490,
+        757
+    ]
+]
 
 face_rects = [face_rect1]
 
@@ -56,8 +56,12 @@ img = cv2.imread(img_path)
 aligner = FaceAligner(caffe_model_path)
 
 t1 = time.clock()
+# You can align the faces in two steps like this:
 #    bboxes, points = aligner.align_face(img, face_rects)
 #    face_chips = aligner.get_face_chips(img, bboxes, points)
+
+# OR just align them in one step by calling the following function,
+# which combine last two functions
 face_chips = aligner.get_face_chips(img, face_rects)
 t2 = time.clock()
 

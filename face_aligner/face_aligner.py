@@ -91,8 +91,13 @@ if __name__ == "__main__":
     aligner = FaceAligner(caffe_model_path)
 
     t1 = time.clock()
+
+    # You can align the faces in two steps like this:
 #    bboxes, points = aligner.align_face(img, face_rects)
 #    face_chips = aligner.get_face_chips(img, bboxes, points)
+
+    # OR just align them in one step by calling the following function,
+    # which combine last two functions
     face_chips = aligner.get_face_chips(img, face_rects)
     t2 = time.clock()
 
