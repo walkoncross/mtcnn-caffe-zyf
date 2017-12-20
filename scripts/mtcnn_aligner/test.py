@@ -19,6 +19,7 @@ import json
 import time
 import cv2
 
+import _init_paths
 from mtcnn_aligner import MtcnnAligner, draw_faces
 
 
@@ -27,7 +28,7 @@ def main(img_path, face_rects, save_dir=None, save_img=True, show_img=True):
         save_dir = './fa_test_rlt'
 
     save_json = 'mtcnn_align_rlt.json'
-    caffe_model_path = "../model"
+    caffe_model_path = "../../model"
 
     if not osp.exists(save_dir):
         os.makedirs(save_dir)

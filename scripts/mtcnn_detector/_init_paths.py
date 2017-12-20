@@ -1,10 +1,3 @@
-# --------------------------------------------------------
-# xxx
-# Copyright (c) 2016 xxx
-# Licensed under The MIT License [see LICENSE for details]
-# Written by Duino Du
-# --------------------------------------------------------
-
 import os.path as osp
 import sys
 

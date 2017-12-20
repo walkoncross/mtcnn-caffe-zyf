@@ -6,4 +6,4 @@ def add_path(path):
     if path not in sys.path:
         sys.path.insert(0, path)
 
-add_path(osp.abspath('../../mtcnn_aligner'))
+add_path(osp.abspath('../../face_aligner'))

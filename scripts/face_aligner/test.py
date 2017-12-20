@@ -9,13 +9,16 @@ import os
 import os.path as osp
 import json
 import time
+
+import _init_paths
+
 from face_aligner import FaceAligner
 from mtcnn_aligner import draw_faces
 import cv2
 
 show_img = True
 
-caffe_model_path = '../model'
+caffe_model_path = '../../model'
 save_dir = './face_chips'
 #    save_json = 'mtcnn_align_test_rlt.json'
 
