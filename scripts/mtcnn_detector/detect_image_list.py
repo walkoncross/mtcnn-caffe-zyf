@@ -16,6 +16,9 @@ import _init_paths
 from mtcnn_detector import MtcnnDetector, draw_faces
 
 
+SAVE_INTO_SEPERATE_JSON=True
+
+
 def print_usage():
     usage = 'python %s <img-list-file> <img-root-dir> <save-dir>' % osp.basename(
         __file__)
@@ -36,6 +39,9 @@ def main(img_list_fn,
     if not osp.exists(save_dir):
         os.makedirs(save_dir)
 
+    fp = open(img_list_fn, 'r')
+
+#    if not SAVE_INTO_SEPERATE_JSON:
     fp_rlt = open(osp.join(save_dir, 'mtcnn_fd_rlt.json'), 'w')
 
     result_list = []
@@ -44,8 +50,6 @@ def main(img_list_fn,
     detector = MtcnnDetector(caffe_model_path)
     t2 = time.clock()
     print("initFaceDetector() costs %f seconds" % (t2 - t1))
-
-    fp = open(img_list_fn, 'r')
 
     ttl_time = 0.0
     img_cnt = 0
@@ -106,6 +110,13 @@ def main(img_list_fn,
             rlt['face_count'] = len(bboxes)
 
         rlt['message'] = 'success'
+
+        if SAVE_INTO_SEPERATE_JSON:
+            fn_json = osp.join(save_dir, osp.splitext(osp.basename(img_path))[0] + '.json')
+            fp_json = open(fn_json, 'w')
+            json.dump(rlt, fp_json, indent=2)
+            fp_json.close()
+#        else:
         result_list.append(rlt)
 
 #        print('output bboxes: ' + str(bboxes))
@@ -132,8 +143,10 @@ def main(img_list_fn,
             if ch == 27:
                 break
 
+#    if not SAVE_INTO_SEPERATE_JSON:
     json.dump(result_list, fp_rlt, indent=2)
     fp_rlt.close()
+
     fp.close()
 
     if show_img:
@@ -143,9 +156,12 @@ def main(img_list_fn,
 if __name__ == "__main__":
     print_usage()
 
-    img_list_fn = "../../test_imgs/list_img_det.txt"
-    img_root_dir = "../../test_imgs/"
-    save_dir = './fd_rlt4'
+    # img_list_fn = "../../test_imgs/list_img_det.txt"
+    # img_root_dir = "../../test_imgs/"
+    # save_dir = './fd_rlt4'
+    img_list_fn = r"C:\zyf\00_Ataraxia\facex\facex-feat-test-imgs\original\list_img.txt"
+    img_root_dir = r"C:\zyf\00_Ataraxia\facex\facex-feat-test-imgs\original"
+    save_dir = './fd_rlt5'
 
     print(sys.argv)
 
