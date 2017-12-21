@@ -11,22 +11,25 @@ from mtcnn_aligner import MtcnnAligner
 from fx_warp_and_crop_face import warp_and_crop_face
 
 
-class FaceAligner:
-    def __init__(self, caffe_model_path):
-        self.aligner = MtcnnAligner(caffe_model_path)
-
-    def align_face(self, img, face_rects):
+class FaceAligner(MtcnnAligner):
+#    def __init__(self, caffe_model_path):
+#        self.aligner = MtcnnAligner(caffe_model_path)
+#
+#    def align_face(self, img, face_rects):
+#        if isinstance(img, str):
+#            img = cv2.imread(img)
+#
+#        regressed_rects, facial_points = self.aligner.align_face(
+#            img, face_rects)
+#
+#        return (regressed_rects, facial_points)
+#
+    def get_face_chips(self, img, face_rects, facial_points=None):
         if isinstance(img, str):
             img = cv2.imread(img)
 
-        regressed_rects, facial_points = self.aligner.align_face(
-            img, face_rects)
-
-        return (regressed_rects, facial_points)
-
-    def get_face_chips(self, img, face_rects, facial_points=None):
         if facial_points is None:
-            rects, facial_points = self.aligner.align_face(
+            rects, facial_points = self.align_face(
                 img, face_rects)
         reference_5pts = None
         output_size = (96, 112)  # (w, h) not (h,w)
@@ -44,7 +47,7 @@ class FaceAligner:
 if __name__ == "__main__":
     import os
     import os.path as osp
-    import json
+#    import json
     import time
     from mtcnn_aligner import draw_faces
 
