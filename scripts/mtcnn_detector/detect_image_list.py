@@ -143,8 +143,8 @@ def main(img_list_fn,
 if __name__ == "__main__":
     print_usage()
 
-    img_list_fn = "../test_imgs/list_img_det.txt"
-    img_root_dir = "../test_imgs/"
+    img_list_fn = "../../test_imgs/list_img_det.txt"
+    img_root_dir = "../../test_imgs/"
     save_dir = './fd_rlt4'
 
     print(sys.argv)
