@@ -31,6 +31,7 @@ class FaceAligner(MtcnnAligner):
         if facial_points is None:
             rects, facial_points = self.align_face(
                 img, face_rects)
+
         reference_5pts = None
         output_size = (96, 112)  # (w, h) not (h,w)
 
