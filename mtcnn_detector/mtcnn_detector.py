@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+import os.path as osp
+
 import caffe
 import cv2
 import numpy as np
@@ -684,14 +686,14 @@ def detect_face(detector, cv_img, minsize=20,
 
 def get_detector(caffe_model_path):
     caffe.set_mode_gpu()
-    PNet = caffe.Net(caffe_model_path + "/det1.prototxt",
-                     caffe_model_path + "/det1.caffemodel", caffe.TEST)
-    RNet = caffe.Net(caffe_model_path + "/det2.prototxt",
-                     caffe_model_path + "/det2.caffemodel", caffe.TEST)
-    ONet = caffe.Net(caffe_model_path + "/det3.prototxt",
-                     caffe_model_path + "/det3.caffemodel", caffe.TEST)
-    LNet = caffe.Net(caffe_model_path + "/det4.prototxt",
-                     caffe_model_path + "/det4.caffemodel", caffe.TEST)
+    PNet = caffe.Net(osp.join(caffe_model_path, "det1.prototxt"),
+                     osp.join(caffe_model_path, "det1.caffemodel"), caffe.TEST)
+    RNet = caffe.Net(osp.join(caffe_model_path, "det2.prototxt"),
+                     osp.join(caffe_model_path, "det2.caffemodel"), caffe.TEST)
+    ONet = caffe.Net(osp.join(caffe_model_path, "det3.prototxt"),
+                     osp.join(caffe_model_path, "det3.caffemodel"), caffe.TEST)
+    LNet = caffe.Net(osp.join(caffe_model_path, "det4.prototxt"),
+                     osp.join(caffe_model_path, "det4.caffemodel"), caffe.TEST)
 
 #    return (PNet, RNet, ONet)
     return (PNet, RNet, ONet, LNet)
@@ -729,11 +731,11 @@ def draw_faces(img, bboxes, points=None, draw_score=False):
         cv2.rectangle(img, (int(bbox[0]), int(bbox[1])), (int(
             bbox[2]), int(bbox[3])), (0, 255, 0), 1)
 
-        if draw_score:
+        if draw_score and len(bbox)>4:
             text = '%2.3f' % (bbox[4] * 100)
             cv2_put_text_to_image(img, text, int(bbox[0]), int(bbox[3]), 15)
 
-        if points is not None:
+        if points is not None and points[i] is not None:
             for j in range(5):
                 cv2.circle(img, (int(points[i][j]), int(
                     points[i][j + 5])), 2, (0, 0, 255), -1)

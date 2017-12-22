@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+import os.path as osp
 #import _init_paths
 import caffe
 import cv2
@@ -418,19 +419,19 @@ def align_face(aligner, cv_img,  face_rects):
 
 def get_aligner(caffe_model_path, use_more_stage=False):
     caffe.set_mode_gpu()
-#    PNet = caffe.Net(caffe_model_path + "/det1.prototxt",
-#                     caffe_model_path + "/det1.caffemodel", caffe.TEST)
+#    PNet = caffe.Net(osp.join(caffe_model_path, "det1.prototxt"),
+#                     osp.join(caffe_model_path, "det1.caffemodel"), caffe.TEST)
     if use_more_stage:
-        RNet = caffe.Net(caffe_model_path + "/det2.prototxt",
-                         caffe_model_path + "/det2.caffemodel", caffe.TEST)
+        RNet = caffe.Net(osp.join(caffe_model_path, "det2.prototxt"),
+                         osp.join(caffe_model_path, "det2.caffemodel"), caffe.TEST)
     else:
         RNet = None
 
-    ONet = caffe.Net(caffe_model_path + "/det3.prototxt",
-                     caffe_model_path + "/det3.caffemodel", caffe.TEST)
+    ONet = caffe.Net(osp.join(caffe_model_path, "det3.prototxt"),
+                     osp.join(caffe_model_path, "det3.caffemodel"), caffe.TEST)
 
-    LNet = caffe.Net(caffe_model_path + "/det4.prototxt",
-                     caffe_model_path + "/det4.caffemodel", caffe.TEST)
+    LNet = caffe.Net(osp.join(caffe_model_path, "det4.prototxt"),
+                     osp.join(caffe_model_path, "det4.caffemodel"), caffe.TEST)
 
 #    return (PNet, RNet, ONet)
     return (RNet, ONet, LNet)

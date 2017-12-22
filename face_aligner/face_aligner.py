@@ -11,25 +11,27 @@ from mtcnn_aligner import MtcnnAligner
 from fx_warp_and_crop_face import warp_and_crop_face
 
 
-class FaceAligner(MtcnnAligner):
-#    def __init__(self, caffe_model_path):
-#        self.aligner = MtcnnAligner(caffe_model_path)
-#
-#    def align_face(self, img, face_rects):
-#        if isinstance(img, str):
-#            img = cv2.imread(img)
-#
-#        regressed_rects, facial_points = self.aligner.align_face(
-#            img, face_rects)
-#
-#        return (regressed_rects, facial_points)
-#
-    def get_face_chips(self, img, face_rects, facial_points=None):
+class FaceAligner:
+    def __init__(self, caffe_model_path=None):
+        self.aligner = None
+        if caffe_model_path:
+            self.aligner = MtcnnAligner(caffe_model_path)           
+
+    def align_face(self, img, face_rects):
         if isinstance(img, str):
             img = cv2.imread(img)
 
+        regressed_rects, facial_points = self.aligner.align_face(
+            img, face_rects)
+
+        return (regressed_rects, facial_points)
+
+    def get_face_chips(self, img, face_rects, facial_points=None):
         if facial_points is None:
-            rects, facial_points = self.align_face(
+            if self.aligner is None:
+                raise Exception('FaceAligner.aligner is not initialized')
+
+            rects, facial_points = self.aligner.align_face(
                 img, face_rects)
 
         reference_5pts = None
