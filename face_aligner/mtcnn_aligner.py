@@ -417,8 +417,11 @@ def align_face(aligner, cv_img,  face_rects):
     return total_boxes.tolist(), points.tolist()
 
 
-def get_aligner(caffe_model_path, use_more_stage=False):
-    caffe.set_mode_gpu()
+def get_aligner(caffe_model_path, use_more_stage=False, gpu_id=0):
+    if gpu_id >= 0:
+        caffe.set_mode_gpu()
+        caffe.set_device(gpu_id)
+
 #    PNet = caffe.Net(osp.join(caffe_model_path, "det1.prototxt"),
 #                     osp.join(caffe_model_path, "det1.caffemodel"), caffe.TEST)
     if use_more_stage:
@@ -480,8 +483,8 @@ def draw_faces(img, bboxes, points=None, draw_score=False):
 
 
 class MtcnnAligner:
-    def __init__(self, caffe_model_path, use_more_stage=False):
-        self.detector = get_aligner(caffe_model_path, use_more_stage)
+    def __init__(self, caffe_model_path, use_more_stage=False, gpu_id=0):
+        self.detector = get_aligner(caffe_model_path, use_more_stage, gpu_id)
 
     def align_face(self, img, face_rects):
         if isinstance(img, str):
@@ -499,6 +502,7 @@ if __name__ == "__main__":
     show_img = True
 
     caffe_model_path = '../model'
+    gpu_id = 0
     save_dir = './fa_rlt'
 #    fn_json = 'mtcnn_align_test_rlt.json'
 
@@ -538,7 +542,7 @@ if __name__ == "__main__":
 
     img = cv2.imread(img_path)
 
-    aligner = MtcnnAligner(caffe_model_path, False)
+    aligner = MtcnnAligner(caffe_model_path, False, gpu_id)
 
     t1 = time.clock()
     bboxes, points = aligner.align_face(img, face_rects)

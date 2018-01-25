@@ -684,8 +684,11 @@ def detect_face(detector, cv_img, minsize=20,
     return total_boxes.tolist(), points.tolist()
 
 
-def get_detector(caffe_model_path):
-    caffe.set_mode_gpu()
+def get_detector(caffe_model_path, gpu_id=0):
+    if gpu_id >= 0:
+        caffe.set_mode_gpu()
+        caffe.set_device(gpu_id)
+
     PNet = caffe.Net(osp.join(caffe_model_path, "det1.prototxt"),
                      osp.join(caffe_model_path, "det1.caffemodel"), caffe.TEST)
     RNet = caffe.Net(osp.join(caffe_model_path, "det2.prototxt"),
@@ -742,8 +745,8 @@ def draw_faces(img, bboxes, points=None, draw_score=False):
 
 
 class MtcnnDetector:
-    def __init__(self, caffe_model_path):
-        self.detector = get_detector(caffe_model_path)
+    def __init__(self, caffe_model_path, gpu_id=0):
+        self.detector = get_detector(caffe_model_path, gpu_id)
 
     def detect_face(self, img,
                     minsize=20,
@@ -768,6 +771,7 @@ if __name__ == "__main__":
     img_path = "../test_imgs/girls.jpg"
 
     caffe_model_path = "../model"
+	gpu_id = 0
 
     minsize = 20
     threshold = [0.6, 0.7, 0.7]
@@ -778,7 +782,7 @@ if __name__ == "__main__":
 
     img = cv2.imread(img_path)
 
-    detector = MtcnnDetector(caffe_model_path)
+    detector = MtcnnDetector(caffe_model_path, gpu_id)
     bboxes, points = detector.detect_face(img, minsize,
                                           threshold, scale_factor,
                                           True)

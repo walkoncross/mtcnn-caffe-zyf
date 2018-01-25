@@ -12,10 +12,10 @@ from fx_warp_and_crop_face import warp_and_crop_face
 
 
 class FaceAligner:
-    def __init__(self, caffe_model_path=None):
+    def __init__(self, caffe_model_path=None, gpu_id=0):
         self.aligner = None
         if caffe_model_path:
-            self.aligner = MtcnnAligner(caffe_model_path)           
+            self.aligner = MtcnnAligner(caffe_model_path, gpu_id)           
 
     def align_face(self, img, face_rects):
         if isinstance(img, str):
@@ -57,6 +57,7 @@ if __name__ == "__main__":
     show_img = True
 
     caffe_model_path = '../model'
+    gpu_id = 0
     save_dir = './face_chips'
 #    save_json = 'mtcnn_align_test_rlt.json'
 
@@ -94,7 +95,7 @@ if __name__ == "__main__":
 
     img = cv2.imread(img_path)
 
-    aligner = FaceAligner(caffe_model_path)
+    aligner = FaceAligner(caffe_model_path, gpu_id)
 
     t1 = time.clock()
 
