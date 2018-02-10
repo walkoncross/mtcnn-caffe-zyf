@@ -84,7 +84,7 @@ def get_gt_rect(rect_fn):
     w = int(w * s)
     h = int(h * s)
 
-    rect = [int(it) for it in spl]
+    rect = [x, y, w, h]
 
     return rect
 
