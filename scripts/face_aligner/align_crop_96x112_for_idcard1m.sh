@@ -3,13 +3,16 @@ splits=1
 num_gpu=1
 # declare -x GLOG_minloglevel=2
 
-if [ $# -gt 1 ]; then
+if [ $# -gt 0 ]; then
     splits=$1
 fi
 
-if [ $# -gt 2 ]; then
+if [ $# -gt 1 ]; then
     num_gpu=$2
 fi
+
+echo 'splits: ' $splits
+echo 'num_gpu: ' $num_gpu
 
 if [ $splits -lt 2 ]; then
     nohup python batch_mtcnn_align_crop_96x112_for_idcard1m.py \
@@ -32,8 +35,8 @@ else
         let start=splits_per_gpu*gpu_id
         let end=start+splits_per_gpu-1
 
-        echo 'start image id: ' $start
-        echo 'end image id: ' $end
+        echo 'start split id: ' $start
+        echo 'end split id: ' $end
 
         for i in `seq $start $end`; do
             echo 'loop-'$i
