@@ -166,7 +166,7 @@ def main(args):
 
     for line in all_lines:
         line = line.strip()
-        print '%d\n', count
+        print '%d\n' % count
 
         count = count + 1
         img_fn = osp.join(img_root_dir, line)
