@@ -17,6 +17,7 @@ import argparse
 # reload(sys)
 # sys.setdefaultencoding("utf-8")
 
+import _init_paths
 # from matplotlib import pyplot as plt
 from mtcnn_aligner import MtcnnAligner
 
@@ -42,7 +43,7 @@ def parse_args():
                         help='')
     parser.add_argument('--gpu-id', type=int, default=0,
                         help='')
-    parser.add_argument('--nsplit', type=int, default=1,
+    parser.add_argument('--nsplits', type=int, default=1,
                         help='how many splits to split the image-list into')
     parser.add_argument('--split-id', type=int, default=0,
                         help='which split to process in current program process')
@@ -70,6 +71,18 @@ def get_gt_rect(rect_fn):
     fp.close()
 
     spl = line.split()
+
+    x = int(spl[0])
+    y = int(spl[1])
+    w = int(spl[2])
+    h = int(spl[3])
+
+    s = 1.5
+
+    x = int(x - w * (s - 1) / 2.0)
+    y = int(x - w * (s - 1) / 2.0)
+    w = int(w * s)
+    h = int(h * s)
 
     rect = [int(it) for it in spl]
 
@@ -150,7 +163,7 @@ def main(args):
 
         print 'image.shape:', img.shape
 
-        rect_fn = osp.join(rect_root_dir, line[1:-4] + '.txt')
+        rect_fn = osp.join(rect_root_dir, line[0:-4] + '.txt')
         GT_RECT = get_gt_rect(rect_fn)
 
         # print 'face rect: ', gt

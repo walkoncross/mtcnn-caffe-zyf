@@ -12,6 +12,8 @@ import os
 import os.path as osp
 import sys
 
+import _init_paths
+
 # reload(sys)
 # sys.setdefaultencoding("utf-8")
 
