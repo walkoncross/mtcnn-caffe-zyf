@@ -41,15 +41,15 @@ else
         for i in `seq $start $end`; do
             echo 'loop-'$i
             nohup python batch_mtcnn_align_crop_96x112_for_idcard1m.py \
-            --image-list=/disk2/data/FACE/face-idcard-1M/face-idcard-1M-image-list.txt \
-            --image-root-dir=/disk2/data/FACE/face-idcard-1M/ori \
-            --rect-root-dir=/disk2/data/FACE/face-idcard-1M/result \
-            --mtcnn-model-dir=../../model \
-            --save-dir=/disk2/data/FACE/face-idcard-1M/face-idcard-1M-mtcnn-aligned-96x112 \
-            --gpu-id=$gpu_id \
-            --nsplits=$splits \
-            --split-id=$i   > '/workspace/process-log-'$splits'-'$i'.txt' &
-            echo 'pause 1 seconds to wait for initialzation'
+                --image-list=/disk2/data/FACE/face-idcard-1M/face-idcard-1M-image-list.txt \
+                --image-root-dir=/disk2/data/FACE/face-idcard-1M/ori \
+                --rect-root-dir=/disk2/data/FACE/face-idcard-1M/result \
+                --mtcnn-model-dir=../../model \
+                --save-dir=/disk2/data/FACE/face-idcard-1M/face-idcard-1M-mtcnn-aligned-96x112-2 \
+                --gpu-id=$gpu_id \
+                --nsplits=$splits \
+                --split-id=$i   > '/workspace/process-log-'$splits'-'$i'.txt' &
+            echo 'pause 1 seconds to wait for initialization'
             sleep 1
         done
     done

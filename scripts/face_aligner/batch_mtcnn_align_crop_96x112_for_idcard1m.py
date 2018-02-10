@@ -131,7 +131,7 @@ def main(args):
         print('makedirs for face rects/landmarks: ', save_rects_dir)
         os.makedirs(save_rects_dir)
 
-    aligner = MtcnnAligner(mtcnn_model_dir, False, gpu_id=gpu_id)
+    aligner = MtcnnAligner(mtcnn_model_dir, True, gpu_id=gpu_id)
 
     fp = open(list_file, 'r')
     all_lines = fp.readlines()
