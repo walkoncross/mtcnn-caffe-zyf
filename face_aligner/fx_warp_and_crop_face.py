@@ -23,10 +23,12 @@ REFERENCE_FACIAL_POINTS = [
 
 DEFAULT_CROP_SIZE = (96, 112)
 
+
 class FaceWarpException(Exception):
     def __str__(self):
         return 'In File {}:{}'.format(
-                __file__, super.__str__(self))
+            __file__, super.__str__(self))
+
 
 def get_reference_facial_points(output_size=None,
                                 inner_padding_factor=0.0,
@@ -66,9 +68,9 @@ def get_reference_facial_points(output_size=None,
         return REFERENCE_FACIAL_POINTS
 
     if not (output_padding[0] < output_size[0]
-           and output_padding[1] < output_size[1]):
+            and output_padding[1] < output_size[1]):
         raise FaceWarpException('Not (output_padding[0] < output_size[0]'
-           'and output_padding[1] < output_size[1])')
+                                'and output_padding[1] < output_size[1])')
 
     if not (0 <= inner_padding_factor <= 1.0):
         raise FaceWarpException('Not (0 <= inner_padding_factor <= 1.0)')
@@ -196,12 +198,24 @@ def warp_and_crop_face(src_img,
     """
 
     if reference_pts is None:
-        reference_pts = REFERENCE_FACIAL_POINTS
+        if crop_size[0] == 96 and crop_size[1] == 112:
+            reference_pts = REFERENCE_FACIAL_POINTS
+        else:
+            output_square = False
+            inner_padding_factor = 0
+            output_padding = (0, 0)
+            output_size = crop_size
+
+            reference_pts = get_reference_facial_points(output_size,
+                                                        inner_padding_factor,
+                                                        output_padding,
+                                                        output_square)
 
     ref_pts = np.float32(reference_pts)
     ref_pts_shp = ref_pts.shape
     if max(ref_pts_shp) < 3 or min(ref_pts_shp) != 2:
-        raise FaceWarpException('reference_pts.shape must be (K,2) or (2,K) and K>2')
+        raise FaceWarpException(
+            'reference_pts.shape must be (K,2) or (2,K) and K>2')
 
     if ref_pts_shp[0] == 2:
         ref_pts = ref_pts.T
@@ -209,7 +223,8 @@ def warp_and_crop_face(src_img,
     src_pts = np.float32(facial_pts)
     src_pts_shp = src_pts.shape
     if max(src_pts_shp) < 3 or min(src_pts_shp) != 2:
-        raise FaceWarpException('facial_pts.shape must be (K,2) or (2,K) and K>2')
+        raise FaceWarpException(
+            'facial_pts.shape must be (K,2) or (2,K) and K>2')
 
     if src_pts_shp[0] == 2:
         src_pts = src_pts.T
@@ -312,11 +327,10 @@ if __name__ == '__main__':
     plt.imshow(image_show)
 
     def crop_test(image,
-             facial5points,
-             reference_points=None,
-             output_size=(96, 112),
-             align_type='similarity'):
-
+                  facial5points,
+                  reference_points=None,
+                  output_size=(96, 112),
+                  align_type='similarity'):
 
         #dst_img = transform_and_crop_face(image, facial5points, coord5points, imgSize)
 
