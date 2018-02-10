@@ -9,7 +9,7 @@ if [ $# -gt 1 ]; then
 if [ $# -gt 2 ]; then
     num_gpu=$2
 
-if [ $splits gt 1 ]; then
+if [ $splits -lt 2 ]; then
     nohup python batch_mtcnn_align_crop_96x112_for_idcard1m.py \
         --image-list=/disk2/data/FACE/face-idcard-1M/face-idcard-1M-image-list.txt \
         --image-root-dir=/disk2/data/FACE/face-idcard-1M/ori \
