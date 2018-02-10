@@ -16,6 +16,7 @@ import argparse
 
 # reload(sys)
 # sys.setdefaultencoding("utf-8")
+os.environ['GLOG_minloglevel'] = '2'  # suppress log
 
 import _init_paths
 # from matplotlib import pyplot as plt
@@ -80,7 +81,7 @@ def get_gt_rect(rect_fn):
     s = 1.5
 
     x = int(x - w * (s - 1) / 2.0)
-    y = int(x - w * (s - 1) / 2.0)
+    y = int(y - w * (s - 1) / 2.0)
     w = int(w * s)
     h = int(h * s)
 

@@ -12,6 +12,8 @@ import os
 import os.path as osp
 import sys
 
+os.environ['GLOG_minloglevel'] = '2'  # suppress log
+
 import _init_paths
 
 # reload(sys)
