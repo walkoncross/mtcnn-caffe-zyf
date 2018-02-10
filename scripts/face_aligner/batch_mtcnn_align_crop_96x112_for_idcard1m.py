@@ -61,22 +61,36 @@ def get_gt_rect(rect_fn):
         return None
 
     nfaces = int(fp.readline().strip())
-    if nfaces > 1:
-        print '---> more than one faces are found in rect file\n'
-        return None
     if nfaces < 1:
         print '---> no faces are found in rect file\n'
         return None
+    elif nfaces == 1:
+        line = fp.readline()
+        spl = line.split()
 
-    line = fp.readline()
+        x = int(spl[0])
+        y = int(spl[1])
+        w = int(spl[2])
+        h = int(spl[3])
+    else:
+        line_bk = None
+        max_score = -10000.0
+        for i in range(nfaces):
+            line = fp.readline()
+            spl = line.split()
+            score = float(spl[4])
+            if max_score < score:
+                max_score = score
+                line_bk = line
+
+        spl = line_bk.split()
+
+        x = int(spl[0])
+        y = int(spl[1])
+        w = int(spl[2])
+        h = int(spl[3])
+
     fp.close()
-
-    spl = line.split()
-
-    x = int(spl[0])
-    y = int(spl[1])
-    w = int(spl[2])
-    h = int(spl[3])
 
     s = 1.5
 
@@ -85,7 +99,7 @@ def get_gt_rect(rect_fn):
     w = int(w * s)
     h = int(h * s)
 
-    rect = [x, y, x+w, y+h]
+    rect = [x, y, x + w, y + h]
 
     return rect
 
@@ -152,7 +166,7 @@ def main(args):
 
     for line in all_lines:
         line = line.strip()
-        print count
+        print '%d\n', count
 
         count = count + 1
         img_fn = osp.join(img_root_dir, line)
