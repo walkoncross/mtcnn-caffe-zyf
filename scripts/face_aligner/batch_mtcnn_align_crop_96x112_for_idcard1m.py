@@ -165,10 +165,13 @@ def main(args):
         print 'image.shape:', img.shape
 
         rect_fn = osp.join(rect_root_dir, line[0:-4] + '.txt')
-        GT_RECT = get_gt_rect(rect_fn)
+        gt_rect = get_gt_rect(rect_fn)
+        if gt_rect is None:
+            print('Failed to get_gt_rect(), skip to next image')
+            continue
 
         # print 'face rect: ', gt
-        boxes, points = aligner.align_face(img, [GT_RECT])
+        boxes, points = aligner.align_face(img, [gt_rect])
 
         box = boxes[0]
         pts = points[0]
