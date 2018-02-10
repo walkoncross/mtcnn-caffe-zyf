@@ -85,7 +85,7 @@ def get_gt_rect(rect_fn):
     w = int(w * s)
     h = int(h * s)
 
-    rect = [x, y, w, h]
+    rect = [x, y, x+w, y+h]
 
     return rect
 
