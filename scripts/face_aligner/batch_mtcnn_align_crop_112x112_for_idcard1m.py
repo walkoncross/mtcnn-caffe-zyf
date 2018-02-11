@@ -26,7 +26,14 @@ from fx_warp_and_crop_face import get_reference_facial_points, warp_and_crop_fac
 
 
 output_size = (112, 112)
-reference_5pts = None
+output_square = True
+inner_padding_factor = 0
+output_padding = (0, 0)
+
+reference_5pts = get_reference_facial_points(output_size,
+                                                inner_padding_factor,
+                                                output_padding,
+                                                output_square)
 
 
 def parse_args():
