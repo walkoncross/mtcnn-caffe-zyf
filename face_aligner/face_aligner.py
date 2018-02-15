@@ -8,14 +8,14 @@ import cv2
 import numpy as np
 
 from mtcnn_aligner import MtcnnAligner
-from fx_warp_and_crop_face import warp_and_crop_face
+from fx_warp_and_crop_face import warp_and_crop_face, get_reference_facial_points
 
 
 class FaceAligner:
     def __init__(self, caffe_model_path=None, gpu_id=0):
         self.aligner = None
         if caffe_model_path:
-            self.aligner = MtcnnAligner(caffe_model_path, gpu_id)           
+            self.aligner = MtcnnAligner(caffe_model_path, gpu_id)
 
     def align_face(self, img, face_rects):
         if isinstance(img, str):
@@ -26,7 +26,7 @@ class FaceAligner:
 
         return (regressed_rects, facial_points)
 
-    def get_face_chips(self, img, face_rects, facial_points=None):
+    def get_face_chips(self, img, face_rects, facial_points=None, output_square=False):
         if facial_points is None:
             if self.aligner is None:
                 raise Exception('FaceAligner.aligner is not initialized')
@@ -36,6 +36,10 @@ class FaceAligner:
 
         reference_5pts = None
         output_size = (96, 112)  # (w, h) not (h,w)
+        if output_square:
+            output_size = (112, 112)
+            reference_5pts = get_reference_facial_points(
+                output_size)
 
         face_chips = []
         for facial_5pts in facial_points:
