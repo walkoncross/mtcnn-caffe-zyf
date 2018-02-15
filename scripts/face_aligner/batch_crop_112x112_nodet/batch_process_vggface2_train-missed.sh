@@ -6,7 +6,8 @@ mkdir $save_dir
 # let cnt=splits-1
 # for i in `seq 0 $cnt`;
 list=(4 5 8 10 11 12 14 15)
-do i in ${list[@]}
+for i in ${list[@]}
+do
 	echo 'loop-'$i
 	nohup python ./batch_crop_112x112_nodet.py \
 		--image-list=/disk2/data/FACE/vggface2/meta/train_list.txt \
