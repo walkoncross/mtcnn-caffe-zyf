@@ -159,9 +159,9 @@ def main(args):
 
         rect_fn = osp.join(rect_root_dir, line[0:-4] + '.txt')
         box, pts = get_rect_and_landmarks(rect_fn)
-        if rect is None:
-            print('Failed to get_rect_and_landmarks(), skip to next image')
-            continue
+        # if box is None:
+        #     print('Failed to get_rect_and_landmarks(), skip to next image')
+        #     continue
 
         # print 'face rect: ', gt
         # boxes, points = aligner.align_face(img, [rect])
@@ -184,7 +184,8 @@ def main(args):
 
         save_img_fn = osp.join(save_img_subdir, base_name)
 
-        facial5points = np.reshape(pts, (2, -1))
+        # facial5points = np.reshape(pts, (2, -1))
+        facial5points = np.array(pts)
         dst_img = warp_and_crop_face(
             img, facial5points, reference_5pts, output_size)
         cv2.imwrite(save_img_fn, dst_img)
@@ -198,7 +199,7 @@ def main(args):
 
         for i in range(5):
             fp_rect.write('%5.2f\t%5.2f\n' %
-                          (facial5points[0][i], facial5points[1][i]))
+                          (facial5points[i][0], facial5points[i][1]))
         fp_rect.close()
 
 
