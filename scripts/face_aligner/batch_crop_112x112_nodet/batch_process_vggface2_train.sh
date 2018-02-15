@@ -1,4 +1,4 @@
-splits=128
+splits=32
 
 let cnt=splits-1
 for i in `seq 0 $cnt`;
